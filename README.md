@@ -17,7 +17,6 @@ The objective of this project is to support financial decision-making by automat
 - **Python** (pandas, numpy, matplotlib, seaborn)
 - **Scikit-learn**
 - **Jupyter Notebook**
-- **Git & GitHub**
 
 ## 🚀 Features
 
