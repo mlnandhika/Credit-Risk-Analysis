@@ -281,15 +281,27 @@ plt.show()
 # Hitung matriks korelasi
 correlation_matrix = df[numerical_cols].corr()
 
-# Buat peta panas
+# Buat Heatmap
 plt.figure(figsize=(20, 20))
 sns.heatmap(correlation_matrix, annot=True, fmt='.2f', cmap="Blues")
 plt.show()
+
+"""Berdasarkan correlation matrix terdapat beberapa fitur yang berkolerasi sangat tinggi di atas 0.9. Salah satu dari fitur yang berkolerasi tinggi ini akan dihapus nantinya untuk mengurarangi redundancy data.
+"""
 
 """## **3. Data Preparation**
 
 #### **a. Feature Engineering**
 """
+
+# Mengambil fitur yang berkolerasi di atas 0.9
+high_corr = correlation_matrix.where((correlation_matrix.abs() > 0.9) & (correlation_matrix.abs() < 1.0))
+
+# Ubah menjadi stack dan drop NaN
+high_corr_pairs = high_corr.stack().reset_index()
+high_corr_pairs.columns = ['Feature1', 'Feature2', 'Correlation']
+
+print(high_corr_pairs)
 
 # Menghapus kolom yang tidak digunakan pada pembuatan model
 # Menghapus kolom yang memiliki korelasi sangat tinggi (salah satunya saja)
@@ -336,7 +348,7 @@ for column in numerical_features:
     )
 
 print("Data setelah menangani outliers:")
-display(df.describe())
+df.describe()
 
 """#### **c. Encoding Data**"""
 
@@ -349,7 +361,6 @@ df_encoding = df.copy()
 for col in categorical_features:
     df_encoding[col] = label_encoder.fit_transform(df[col])
 
-# Menampilkan hasil
 df_encoding
 
 """#### **e. Scalling Data**"""
@@ -552,7 +563,6 @@ def plot_roc_curve(model, X_test_roc, y_test_roc, model_name="Model", show=False
     # Plot ROC curve
     plt.plot(fpr, tpr, lw=2, label=f'{model_name} (AUC = {roc_auc:.3f})')
 
-    # Jika ini pemanggilan terakhir, tampilkan plot lengkap
     if show:
         plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=1)
         plt.xlim([0.0, 1.0])
